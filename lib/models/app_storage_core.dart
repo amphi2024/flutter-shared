@@ -29,7 +29,7 @@ abstract class AppStorageCore  {
     };
   }
 
-  Future<void> saveSelectedUser(MethodChannel methodChannel, User user) async {
+  Future<void> saveSelectedUser(User user) async {
    // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     Directory directory = await getApplicationSupportDirectory();
     String storagePath = directory.path;
@@ -39,8 +39,9 @@ abstract class AppStorageCore  {
     await file.writeAsString(jsonEncode(toMap()));
   }
 
-  Future<void> addUser(MethodChannel methodChannel, {required void Function(User) onFinished}) async {
-    String storagePath = await methodChannel.invokeMethod("get_storage_path");
+  Future<void> addUser({required void Function(User) onFinished}) async {
+   // String storagePath = await methodChannel.invokeMethod("get_storage_path");
+    String storagePath = (await getApplicationSupportDirectory() ).path  ;
     Directory directory = Directory("$storagePath/${FileNameGenerator.generatedDirectoryName(storagePath)}");
     await directory.create();
     User user = User(id: "", name: "", password: "", token: "", storagePath: "$storagePath/${FileNameGenerator.generatedDirectoryName(storagePath)}");
@@ -72,13 +73,17 @@ abstract class AppStorageCore  {
     createDirectoryIfNotExists(selectedUser.storagePath);
   }
 
-  void initialize(MethodChannel methodChannel, {required void Function() getData, required void Function() onInitialize}) async {
+  void initialize({required void Function() getData, required void Function() onInitialize}) async {
     // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     Directory directory = await getApplicationSupportDirectory();
+    print("2343243243dkjfshfskfsfjsfhsk");
+    print(directory.path);
     String storagePath = directory.path;
     List<FileSystemEntity> userDirectories = Directory(storagePath).listSync();
    // File cacheFile = File("$storagePath/cache.txt");
     File configFile = File("$storagePath/configuration.json");
+
+
 
     users = [];
     for(FileSystemEntity directory in userDirectories) {
