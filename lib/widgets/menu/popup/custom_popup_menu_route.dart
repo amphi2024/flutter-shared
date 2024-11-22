@@ -70,9 +70,6 @@ class CustomPopupMenuRoute<T> extends PopupRoute<T> {
   @override
   Animation<double> createAnimation() {
     if (popUpAnimationStyle != AnimationStyle.noAnimation) {
-      print("sex: ${popUpAnimationStyle != AnimationStyle.noAnimation}");
-      print("sex: ${popUpAnimationStyle?.curve}");
-      print("sex: ${popUpAnimationStyle?.reverseCurve}");
       return _animation ??= CurvedAnimation(
         parent: super.createAnimation(),
         curve: popUpAnimationStyle?.curve ?? Curves.linear,

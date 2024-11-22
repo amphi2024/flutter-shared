@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:amphi/utils/path_utils.dart';
 import 'package:amphi/utils/random_color.dart';
 
 class User {
@@ -21,7 +22,7 @@ class User {
   });
 
   static User fromDirectory(Directory directory) {
-    File file = File("${directory.path}/user_info.json");
+    File file = File(PathUtils.join(directory.path, "user_info.json"));
     if(file.existsSync()) {
       try {
         Map<String, dynamic> map = jsonDecode(file.readAsStringSync());

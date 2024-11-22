@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:amphi/models/app_server.dart';
-import 'package:amphi/models/file_name_generator.dart';
 import 'package:amphi/models/update_event.dart';
 import 'package:amphi/models/user.dart';
-import 'package:flutter/services.dart';
+import 'package:amphi/utils/file_name_utils.dart';
+import 'package:amphi/utils/path_utils.dart';
 import 'package:path_provider/path_provider.dart';
 
 abstract class AppStorageCore  {
@@ -33,7 +32,7 @@ abstract class AppStorageCore  {
    // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     Directory directory = await getApplicationSupportDirectory();
     String storagePath = directory.path;
-    File file = File("$storagePath/configuration.json");
+    File file = File(PathUtils.join(storagePath, "configuration.json"));
     selectedUser = user;
     
     await file.writeAsString(jsonEncode(toMap()));
@@ -41,10 +40,11 @@ abstract class AppStorageCore  {
 
   Future<void> addUser({required void Function(User) onFinished}) async {
    // String storagePath = await methodChannel.invokeMethod("get_storage_path");
-    String storagePath = (await getApplicationSupportDirectory() ).path  ;
-    Directory directory = Directory("$storagePath/${FileNameGenerator.generatedDirectoryName(storagePath)}");
+    String storagePath = (await getApplicationSupportDirectory() ).path;
+
+    Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
     await directory.create();
-    User user = User(id: "", name: "", password: "", token: "", storagePath: "$storagePath/${FileNameGenerator.generatedDirectoryName(storagePath)}");
+    User user = User(id: "", name: "", password: "", token: "", storagePath: directory.path);
 
     onFinished(user);
   }
@@ -56,7 +56,7 @@ abstract class AppStorageCore  {
   }
 
   Future<void> saveSelectedUserInformation({UpdateEvent? updateEvent}) async {
-    File file = File("${selectedUser.storagePath}/user_info.json");
+    File file = File(PathUtils.join(selectedUser.storagePath, "user_info.json"));
     if(updateEvent != null) {
       if(updateEvent.date.isAfter(file.lastModifiedSync())) {
        await file.writeAsString(jsonEncode(selectedUser.toMap()));
@@ -68,22 +68,17 @@ abstract class AppStorageCore  {
   }
 
   void initPaths() {
-    settingsPath = "${selectedUser.storagePath}/settings.json";
-    colorsPath = "${selectedUser.storagePath}/colors.json";
+    settingsPath = PathUtils.join(selectedUser.storagePath, "settings.json");
+    colorsPath = PathUtils.join(selectedUser.storagePath, "colors.json");
     createDirectoryIfNotExists(selectedUser.storagePath);
   }
 
   void initialize({required void Function() getData, required void Function() onInitialize}) async {
     // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     Directory directory = await getApplicationSupportDirectory();
-    print("2343243243dkjfshfskfsfjsfhsk");
-    print(directory.path);
     String storagePath = directory.path;
     List<FileSystemEntity> userDirectories = Directory(storagePath).listSync();
-   // File cacheFile = File("$storagePath/cache.txt");
-    File configFile = File("$storagePath/configuration.json");
-
-
+    File configFile = File(PathUtils.join(storagePath, "configuration.json"));
 
     users = [];
     for(FileSystemEntity directory in userDirectories) {
@@ -111,7 +106,7 @@ abstract class AppStorageCore  {
           selectedUser = users.first;
         }
         else {
-          Directory directory = Directory("$storagePath/${FileNameGenerator.generatedDirectoryName(storagePath)}");
+          Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
           directory.createSync();
           selectedUser = User.fromDirectory(directory);
         }
@@ -132,7 +127,7 @@ abstract class AppStorageCore  {
           selectedUser = users.first;
         }
         else {
-          Directory directory = Directory("$storagePath/${FileNameGenerator.generatedDirectoryName(storagePath)}");
+          Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
           directory.createSync();
           selectedUser = User.fromDirectory(directory);
         }

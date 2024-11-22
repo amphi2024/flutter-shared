@@ -1,5 +1,4 @@
 
-import 'dart:io';
 
 import 'package:amphi/widgets/video/controls/video_controls.dart';
 import 'package:flutter/material.dart';
