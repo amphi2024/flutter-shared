@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:amphi/models/date_time_parser.dart';
-
 class UpdateEvent {
 
     //websocket, restapi
@@ -31,7 +29,7 @@ class UpdateEvent {
         Map<String, dynamic> map = {
             "action": action,
             "value": value,
-            "date": DateTimeParser.toDataString(date)
+            "date": date.millisecondsSinceEpoch
         };
         return jsonEncode(map);
     }
