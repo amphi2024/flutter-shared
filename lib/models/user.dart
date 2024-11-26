@@ -10,13 +10,15 @@ class User {
   String name;
   String password;
   String storagePath;
+  String token;
   Color color =  RandomColor.generate();
 
   User({
     required this.id,
     required this.name,
     required this.password,
-    required this.storagePath
+    required this.storagePath,
+    required this.token
   });
 
   static User fromDirectory(Directory directory) {
@@ -25,13 +27,13 @@ class User {
       try {
         Map<String, dynamic> map = jsonDecode(file.readAsStringSync());
 
-        return User(id: map["id"] ?? "", name:map["name"] ?? "", password: "", storagePath: directory.path);
+        return User(id: map["id"] ?? "", name:map["name"] ?? "", token: map["token"] ?? "", password: "", storagePath: directory.path);
       } on Exception {
-        return User(id: "", name: "", password: "", storagePath: directory.path);
+        return User(id: "", name: "", password: "", token: "",storagePath: directory.path);
       }
     }
     else {
-      return User(id: "", name: "", password: "", storagePath: directory.path);
+      return User(id: "", name: "", password: "",token: "", storagePath: directory.path);
     }
   }
 

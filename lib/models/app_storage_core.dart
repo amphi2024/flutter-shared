@@ -44,7 +44,7 @@ abstract class AppStorageCore  {
 
     Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
     await directory.create();
-    User user = User(id: "", name: "", password: "", storagePath: directory.path);
+    User user = User(id: "", name: "", password: "", token: "", storagePath: directory.path);
 
     onFinished(user);
   }
