@@ -21,15 +21,19 @@ class UpdateEvent {
 
     final String action;
     final String value;
-    final DateTime date;
+    final DateTime timestamp;
 
-    const UpdateEvent( {required this.action, required this.value, required this.date});
+    const UpdateEvent( {required this.action, required this.value, required this.timestamp});
 
-    String toJson() {
+    static UpdateEvent fromJson(Map<String, dynamic> jsonData) {
+        return UpdateEvent(action: jsonData["action"] ?? "", value: jsonData["value"] ?? "", timestamp: DateTime.fromMillisecondsSinceEpoch(jsonData["timestamp"]).toLocal());
+    }
+
+    String toWebSocketMessage() {
         Map<String, dynamic> map = {
             "action": action,
             "value": value,
-            "date": date.millisecondsSinceEpoch
+            "timestamp": timestamp.toUtc().millisecondsSinceEpoch
         };
         return jsonEncode(map);
     }
@@ -39,7 +43,7 @@ class UpdateEvent {
     return """
     action: $action,
     value: $value,
-    date: $date
+    timestamp: $timestamp
     """;
   }
 }

@@ -6,12 +6,13 @@ class ProfileImage extends StatelessWidget {
   final double size;
   final double fontSize;
   final User user;
-  const ProfileImage({super.key, this.size = 30, this.fontSize = 20, required this.user});
+  final String token;
+  const ProfileImage({super.key, this.size = 30, this.fontSize = 20, required this.user, required this.token});
 
   @override
   Widget build(BuildContext context) {
 
-    if( user.token.isNotEmpty && user.name.isNotEmpty ) {
+    if(token.isNotEmpty && user.name.isNotEmpty ) {
       return Container(
         width: size,
         height: size,

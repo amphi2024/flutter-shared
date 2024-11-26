@@ -44,7 +44,7 @@ abstract class AppStorageCore  {
 
     Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
     await directory.create();
-    User user = User(id: "", name: "", password: "", token: "", storagePath: directory.path);
+    User user = User(id: "", name: "", password: "", storagePath: directory.path);
 
     onFinished(user);
   }
@@ -58,7 +58,7 @@ abstract class AppStorageCore  {
   Future<void> saveSelectedUserInformation({UpdateEvent? updateEvent}) async {
     File file = File(PathUtils.join(selectedUser.storagePath, "user_info.json"));
     if(updateEvent != null) {
-      if(updateEvent.date.isAfter(file.lastModifiedSync())) {
+      if(updateEvent.timestamp.isAfter(file.lastModifiedSync())) {
        await file.writeAsString(jsonEncode(selectedUser.toMap()));
       }
     }
@@ -73,7 +73,7 @@ abstract class AppStorageCore  {
     createDirectoryIfNotExists(selectedUser.storagePath);
   }
 
-  void initialize({required void Function() getData, required void Function() onInitialize}) async {
+  void initialize(void Function() onInitialize) async {
     // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     Directory directory = await getApplicationSupportDirectory();
     String storagePath = directory.path;
@@ -134,13 +134,7 @@ abstract class AppStorageCore  {
       }
     }
 
-
-
-
-
     initPaths();
-
-    getData();
 
     onInitialize();
   }
