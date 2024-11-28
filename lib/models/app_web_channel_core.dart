@@ -10,9 +10,10 @@ abstract class AppWebChannelCore {
 
   bool connected = false;
   WebSocketChannel? webSocketChannel;
-  String serverAddress = "";
-  String token = "";
   late String deviceName;
+
+  get serverAddress => "";
+  get token => "";
 
   void getUserIds({required void Function(List<String>) onResponse, required void Function() onFailed}) async {
     try {

@@ -50,6 +50,7 @@ class User {
     return {
       "id": id,
       "name": name,
+      "token": token
     };
   }
 }
