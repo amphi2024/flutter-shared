@@ -22,7 +22,7 @@ extension ColorExtension on Color {
   }
 
   int get alpha => (0xff000000 & value) >> 24;
-
+  double get opacity => alpha / 0xFF;
   int get red => (0x00ff0000 & value) >> 24;
   int get green => (0x0000ff00 & value) >> 24;
   int get blue => (0x000000ff & value) >> 24;
