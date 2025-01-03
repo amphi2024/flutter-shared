@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:amphi/utils/random_color.dart';
 
 class AppServer {

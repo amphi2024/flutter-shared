@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:amphi/models/app_theme_core.dart';
+import 'package:amphi/extensions/color_extension.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class AppColorsCore {
