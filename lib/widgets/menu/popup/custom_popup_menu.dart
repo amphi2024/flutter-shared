@@ -29,16 +29,16 @@ class _CustomPopupMenuState<T> extends State<CustomPopupMenu<T>> {
   @override
   Widget build(BuildContext context) {
     //final double unit = 1.0 / (widget.route.items.length + 1.5); // 1.0 for the width and 0.5 for the last item's fade.
-    final sex = 5;
-    final double unit = 1.0 / (sex + 1.5);
+    const unit1 = 5;
+    const double unit = 1.0 / (unit1 + 1.5);
     final PopupMenuThemeData popupMenuTheme = PopupMenuTheme.of(context);
    // final ThemeData theme = Theme.of(context);
   // final PopupMenuThemeData defaults = theme.useMaterial3 ? _PopupMenuDefaultsM3(context) : _PopupMenuDefaultsM2(context);
 
     final CurveTween opacity = CurveTween(curve: const Interval(0.0, 1.0 / 3.0));
-    final CurveTween width = CurveTween(curve: Interval(0.0, unit));
+    final CurveTween width = CurveTween(curve: const Interval(0.0, unit));
     // final CurveTween height = CurveTween(curve: Interval(0.0, unit * widget.route.items.length));
-    final CurveTween height = CurveTween(curve: Interval(0.0, unit * sex));
+    final CurveTween height = CurveTween(curve: const Interval(0.0, unit * unit1));
 
     final Widget child = IntrinsicWidth(
       stepWidth: _kMenuWidthStep,

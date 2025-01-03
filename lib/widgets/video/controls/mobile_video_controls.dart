@@ -29,15 +29,15 @@ class _MobileVideoControlsState extends State<MobileVideoControls> {
   late bool visible = _theme(context).visibleOnMount;
   Timer? _timer;
 
-  double _brightnessValue = 0.0;
-  bool _brightnessIndicator = false;
-  Timer? _brightnessTimer;
+  final double _brightnessValue = 0.0;
+  final bool _brightnessIndicator = false;
+  //Timer? _brightnessTimer;
 
-  double _volumeValue = 0.0;
-  bool _volumeIndicator = false;
-  Timer? _volumeTimer;
+  final double _volumeValue = 0.0;
+  final bool _volumeIndicator = false;
+  //Timer? _volumeTimer;
   // The default event stream in package:volume_controller is buggy.
-  bool _volumeInterceptEventStream = false;
+  //bool _volumeInterceptEventStream = false;
 
   Offset _dragInitialDelta =
       Offset.zero; // Initial position for horizontal drag
@@ -957,7 +957,7 @@ class _MobileVideoControlsState extends State<MobileVideoControls> {
                           Expanded(
                               flex: _theme(context)
                                   .seekOnDoubleTapLayoutWidgetRatios[1],
-                              child: SizedBox()),
+                              child: const SizedBox()),
                         Expanded(
                           flex: _theme(context)
                               .seekOnDoubleTapLayoutWidgetRatios[2],

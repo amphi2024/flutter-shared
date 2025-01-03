@@ -1,4 +1,3 @@
-
 import 'package:amphi/widgets/color/picker/color_picker_list.dart';
 import 'package:amphi/widgets/dialogs/confirmation_dialog.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ class _ColorPickerPopupMenuState extends State<ColorPickerPopupMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 650,
       height: 450,
       child: SingleChildScrollView(

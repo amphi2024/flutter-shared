@@ -58,26 +58,3 @@ String fileContent = jsonEncode(toMap());
     return {};
   }
 }
-
-extension CheckColor on Color {
-
-  String toHexString() {
-    return "#${alpha.toHexString()}${red.toHexString()}${green.toHexString()}${blue.toHexString()}";
-  }
-
-  int toHex() {
-    String string =  "0x${alpha.toHexString()}${red.toHexString()}${green.toHexString()}${blue.toHexString()}";
-    return int.parse(string);
-  }
-
-}
-
-extension RadixExtension on int {
-  String toHexString() {
-    String string = toRadixString(16).toUpperCase();
-    if(string.length == 1) {
-      string = "0$string";
-    }
-    return string;
-  }
-}
