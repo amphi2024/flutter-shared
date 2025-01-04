@@ -11,15 +11,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  media_kit: ^1.1.11
-  media_kit_video: ^1.2.5
-  media_kit_libs_video: ^1.0.5
+  media_kit:
+  media_kit_video:
+  media_kit_libs_video:
   path_provider:
   flutter_colorpicker:
-  path: ^1.8.3
-  device_info_plus: ^10.1.0
-  web_socket_channel: ^3.0.1
-  http: ^1.2.2
+  path:
+  device_info_plus:
+  web_socket_channel:
+  http:
 #  media_kit_libs_audio: ^1.0.5
 
 dev_dependencies:
