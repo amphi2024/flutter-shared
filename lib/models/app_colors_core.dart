@@ -12,7 +12,7 @@ abstract class AppColorsCore {
   String encodedColorList(List<Color> colors) {
     List<int> list = [];
     for (Color color in colors) {
-      list.add(color.toHex());
+      list.add(color.value);
     }
     return jsonEncode(list);
   }
