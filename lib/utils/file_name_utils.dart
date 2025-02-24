@@ -27,7 +27,7 @@ abstract class FilenameUtils {
     }
 
     static  String generatedDirectoryName(String path) {
-      int length = Random().nextInt(5) + 1;
+      int length = Random().nextInt(5) + 10;
 
       const String chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
