@@ -49,4 +49,22 @@ abstract class FilenameUtils {
         return result;
       }
     }
+
+    static String generatedDirectoryNameWithChar(String path, String char) {
+      int length = Random().nextInt(5) + 10;
+
+      const String chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+      String result = char;
+      for (int i = 0; i < length; i++) {
+        result += chars[Random().nextInt(chars.length)];
+      }
+
+      if(Directory(PathUtils.join(path, char ,result)).existsSync()) {
+        return generatedDirectoryNameWithChar(path, char);
+      }
+      else {
+        return result;
+      }
+    }
 }
