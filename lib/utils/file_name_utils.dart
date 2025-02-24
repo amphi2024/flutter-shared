@@ -14,7 +14,14 @@ abstract class FilenameUtils {
     }
 
     static String generatedFileName(String type, String path) {
-      String result = randomString(9);
+      int length = Random().nextInt(5) + 10;
+
+      const String chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+      String result = '';
+      for (int i = 0; i < length; i++) {
+        result += chars[Random().nextInt(chars.length)];
+      }
       result += type;
 
       if(File(PathUtils.join(path, result)).existsSync()) {
@@ -23,10 +30,9 @@ abstract class FilenameUtils {
       else {
         return result;
       }
-
     }
 
-    static  String generatedDirectoryName(String path) {
+    static String generatedDirectoryName(String path) {
       int length = Random().nextInt(5) + 10;
 
       const String chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
