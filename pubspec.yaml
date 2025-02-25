@@ -1,6 +1,6 @@
 name: amphi
-description: "A new Flutter project."
-version: 0.0.1
+description: "Shared Codes for Amphi's Flutter apps"
+version: 1.0.0
 homepage: ""
 
 environment:
