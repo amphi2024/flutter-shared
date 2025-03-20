@@ -24,7 +24,7 @@ class AppCacheDataCore {
 
   void getData() async {
     var directory = await getApplicationSupportDirectory();
-    var file = File(PathUtils.join(directory.path, "cached.json"));
+    var file = File(PathUtils.join(directory.path, "cache.json"));
     try {
       data = jsonDecode(await file.readAsString());
     }
@@ -35,7 +35,7 @@ class AppCacheDataCore {
 
   void save() async {
     var directory = await getApplicationSupportDirectory();
-    var file = File(PathUtils.join(directory.path, "cached.json"));
+    var file = File(PathUtils.join(directory.path, "cache.json"));
     await file.writeAsString(jsonEncode(data));
   }
 }
