@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:amphi/models/app_server.dart';
 import 'package:amphi/models/update_event.dart';
 import 'package:amphi/models/user.dart';
 import 'package:amphi/utils/file_name_utils.dart';
@@ -15,31 +14,8 @@ abstract class AppStorageCore  {
   late String colorsPath;
 
   List<User> users = [];
-  List<AppServer> servers = [];
-
-  Map<String, dynamic> toMap() {
-    List<Map<String, dynamic>> list = [];
-   for(AppServer appServer in servers) {
-     list.add(appServer.toMap());
-   }
-    return {
-      "selectedDirectory": selectedUser.storagePath,
-      "servers": jsonEncode(list)
-    };
-  }
-
-  Future<void> saveSelectedUser(User user) async {
-   // String storagePath = await methodChannel.invokeMethod("get_storage_path");
-    Directory directory = await getApplicationSupportDirectory();
-    String storagePath = directory.path;
-    File file = File(PathUtils.join(storagePath, "configuration.json"));
-    selectedUser = user;
-    
-    await file.writeAsString(jsonEncode(toMap()));
-  }
 
   Future<void> addUser({required void Function(User) onFinished}) async {
-   // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     String storagePath = (await getApplicationSupportDirectory() ).path;
 
     Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
@@ -74,11 +50,10 @@ abstract class AppStorageCore  {
   }
 
   void initialize(void Function() onInitialize) async {
-    // String storagePath = await methodChannel.invokeMethod("get_storage_path");
     Directory directory = await getApplicationSupportDirectory();
-    String storagePath = directory.path;
-    List<FileSystemEntity> userDirectories = Directory(storagePath).listSync();
-    File configFile = File(PathUtils.join(storagePath, "configuration.json"));
+    String appSupportDirPath = directory.path;
+    List<FileSystemEntity> userDirectories = Directory(appSupportDirPath).listSync();
+    File cacheFile = File(PathUtils.join(appSupportDirPath, "cache.json"));
 
     users = [];
     for(FileSystemEntity directory in userDirectories) {
@@ -92,11 +67,20 @@ abstract class AppStorageCore  {
 
     bool selectedUserFounded = false;
     try {
-      Map<String, dynamic> map = jsonDecode(await configFile.readAsString());
-
+      Map<String, dynamic> map = {};
+      var oldFile = File(PathUtils.join(appSupportDirPath, "configuration.json"));
+      if(await oldFile.exists()) {
+        var fileContent = await oldFile.readAsString();
+        map = jsonDecode(fileContent);
+        cacheFile.writeAsString(fileContent);
+        oldFile.delete();
+      }
+      else {
+        map = jsonDecode(await cacheFile.readAsString());
+      }
 
      for(User user in users) {
-       if(map["selectedDirectory"] == user.storagePath) {
+       if(map["selectedDirectory"] == PathUtils.basename(user.storagePath)) {
          selectedUser = user;
          selectedUserFounded = true;
        }
@@ -106,17 +90,9 @@ abstract class AppStorageCore  {
           selectedUser = users.first;
         }
         else {
-          Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
+          Directory directory = Directory(PathUtils.join(appSupportDirPath, FilenameUtils.generatedDirectoryName(appSupportDirPath)));
           directory.createSync();
           selectedUser = User.fromDirectory(directory);
-        }
-      }
-
-      List<dynamic> serverList = map["servers"] ?? [];
-
-      for(dynamic data in serverList) {
-        if(data is Map<String, dynamic>) {
-          servers.add(AppServer.fromMap(data));
         }
       }
 
@@ -127,7 +103,7 @@ abstract class AppStorageCore  {
           selectedUser = users.first;
         }
         else {
-          Directory directory = Directory(PathUtils.join(storagePath, FilenameUtils.generatedDirectoryName(storagePath)));
+          Directory directory = Directory(PathUtils.join(appSupportDirPath, FilenameUtils.generatedDirectoryName(appSupportDirPath)));
           directory.createSync();
           selectedUser = User.fromDirectory(directory);
         }

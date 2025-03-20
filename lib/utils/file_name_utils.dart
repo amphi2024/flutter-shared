@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:amphi/utils/path_utils.dart';
-import 'package:amphi/utils/random_string.dart';
 
 abstract class FilenameUtils {
     static String nameOnly(String filename) {
