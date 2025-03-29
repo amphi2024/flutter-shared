@@ -1,7 +1,7 @@
 name: amphi
 description: "Shared Codes for Amphi's Flutter apps"
-version: 1.1.1
-homepage: ""
+version: 1.1.0
+homepage: "https://amphi.site"
 
 environment:
   sdk: ^3.5.1
@@ -11,16 +11,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-  media_kit:
-  media_kit_video:
-  media_kit_libs_video:
-  path_provider:
-  flutter_colorpicker:
-  path:
-  device_info_plus:
-  web_socket_channel:
-  http:
-#  media_kit_libs_audio: ^1.0.5
+  media_kit: ^1.1.11
+  media_kit_video: ^1.2.5
+  media_kit_libs_video: ^1.0.5
+  media_kit_libs_audio: ^1.0.5
+  path_provider: ^2.1.5
+  flutter_colorpicker: ^1.1.0
+  path: ^1.9.1
+  device_info_plus: ^11.3.3
+  web_socket_channel: ^3.0.2
+  http: ^1.3.0
 
 dev_dependencies:
   flutter_test:
