@@ -15,6 +15,8 @@ abstract class AppWebChannelCore {
   get serverAddress => "";
   get token => "";
 
+  List<void Function(String)> userNameUpdateListeners = [];
+
   void getUserIds({required void Function(List<String>) onResponse, required void Function() onFailed}) async {
     try {
       final response = await get(Uri.parse("$serverAddress/users"));
