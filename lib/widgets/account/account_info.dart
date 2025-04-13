@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:amphi/models/app.dart';
+import 'package:amphi/models/app_cache_data_core.dart';
 import 'package:amphi/models/app_localizations.dart';
 import 'package:amphi/models/app_storage_core.dart';
 import 'package:amphi/models/app_web_channel_core.dart';
@@ -11,6 +12,7 @@ import 'package:amphi/widgets/dialogs/confirmation_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/path_utils.dart';
 import 'account_item.dart';
 import 'change_password_dialog.dart';
 import 'login_view.dart';
@@ -19,11 +21,13 @@ class AccountInfo extends StatefulWidget {
   
   final AppWebChannelCore appWebChannel;
   final AppStorageCore appStorage;
+  final AppCacheDataCore appCacheData;
   final void Function() onUserRemoved;
   final void Function() onUserAdded;
   final void Function() onUsernameChanged;
+  final void Function(User) onSelectedUserChanged;
   final void Function({required String id, required String token, required String username}) onLoggedIn;
-  const AccountInfo({super.key, required this.appWebChannel, required this.appStorage, required this.onUserRemoved, required this.onUserAdded, required this.onUsernameChanged, required this.onLoggedIn});
+  const AccountInfo({super.key, required this.appWebChannel, required this.appStorage, required this.onUserRemoved, required this.onUserAdded, required this.onUsernameChanged, required this.onLoggedIn, required this.appCacheData, required this.onSelectedUserChanged});
 
   @override
   State<AccountInfo> createState() => _AccountInfoState();
@@ -231,10 +235,10 @@ class _AccountInfoState extends State<AccountInfo> {
                                   (Route<dynamic> route) => route.isFirst,
                             );
                             widget.appStorage.selectedUser = unselectedUsers[index];
+                            widget.appCacheData.selectedDirectory = PathUtils.basename( unselectedUsers[index].storagePath);
+                            widget.appCacheData.save();
                             widget.appStorage.initPaths();
-                            widget.appWebChannel.disconnectWebSocket();
-                            widget.appWebChannel.connectWebSocket();
-
+                            widget.onSelectedUserChanged(unselectedUsers[index]);
                           });
                     } else {
                       return AccountItem(
