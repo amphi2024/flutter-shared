@@ -192,6 +192,7 @@ class _AccountInfoState extends State<AccountInfo> {
                       //   widget.appStorage.initNotes();
                       // });
                       widget.onUserRemoved();
+
                     });
                   });
                 }
