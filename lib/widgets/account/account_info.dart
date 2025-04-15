@@ -247,7 +247,6 @@ class _AccountInfoState extends State<AccountInfo> {
                           borderRadius: borderRadius,
                           title: AppLocalizations.of(context).get("@add_account"),
                           onPressed: () {
-                            setState(() {
                               widget.appStorage.addUser(onFinished: (user) async {
                                 Navigator.popUntil(
                                   context,
@@ -259,7 +258,6 @@ class _AccountInfoState extends State<AccountInfo> {
                                 widget.appWebChannel.disconnectWebSocket();
                                 widget.onUserAdded();
                               });
-                            });
                           });
                     }
                   }),

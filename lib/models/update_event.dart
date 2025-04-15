@@ -26,6 +26,15 @@ class UpdateEvent {
     static const String uploadPlaylist = "upload_playlist";
     static const String uploadPlaylistThumbnail = "upload_playlist_thumbnail";
 
+    static const String deleteSongInfo = "delete_song_info";
+    static const String deleteSongFile = "delete_song_file";
+    static const String deleteArtistInfo = "delete_artist_info";
+    static const String deleteArtistFile = "delete_artist_file";
+    static const String deleteAlbumInfo = "delete_album_info";
+    static const String deleteAlbumCover = "delete_album_cover";
+    static const String deletePlaylist = "delete_playlist";
+    static const String deletePlaylistThumbnail = "delete_playlist_thumbnail";
+
     static const String renameUser = "rename_user";
 
     // websocket only
