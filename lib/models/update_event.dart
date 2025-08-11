@@ -35,19 +35,27 @@ class UpdateEvent {
     static const String deletePlaylist = "delete_playlist";
     static const String deletePlaylistThumbnail = "delete_playlist_thumbnail";
 
+    static const String uploadPhoto = "upload_photo";
+
     static const String renameUser = "rename_user";
 
     // websocket only
     static const String moveNotes = "move_notes";
 
-    final String action;
-    final String value;
-    final DateTime timestamp;
+    String get action => data["action"];
+    get value => data["value"];
+    DateTime get timestamp => DateTime.fromMillisecondsSinceEpoch(data["timestamp"]).toLocal();
+    DateTime get timestampUTC => DateTime.fromMillisecondsSinceEpoch(data["timestamp"]);
+    Map<String, dynamic> data = {};
 
-    const UpdateEvent( {required this.action, required this.value, required this.timestamp});
+    UpdateEvent({required String action, required dynamic value, int? timestamp}) {
+        data["action"] = action;
+        data["value"] = value;
+        data["timestamp"] = timestamp ?? DateTime.now().toUtc().millisecondsSinceEpoch;
+    }
 
-    static UpdateEvent fromJson(Map<String, dynamic> jsonData) {
-        return UpdateEvent(action: jsonData["action"] ?? "", value: jsonData["value"] ?? "", timestamp: DateTime.fromMillisecondsSinceEpoch(jsonData["timestamp"]).toLocal());
+    UpdateEvent.fromJson(Map<String, dynamic> json) {
+        data = json;
     }
 
     String toWebSocketMessage() {
