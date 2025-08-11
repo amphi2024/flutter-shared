@@ -12,8 +12,9 @@ abstract class AppWebChannelCore {
   WebSocketChannel? webSocketChannel;
   late String deviceName;
 
-  get serverAddress => "";
-  get token => "";
+  String get serverAddress => "";
+  String get token => "";
+  String get appType => "";
 
   List<void Function(String)> userNameUpdateListeners = [];
 
@@ -57,13 +58,13 @@ abstract class AppWebChannelCore {
   void disconnectWebSocket() {
     webSocketChannel?.sink.close();
   }
-  Future<void> connectWebSocket();
-  Future<void> connectWebSocketSuper(String path) async {
+
+  Future<void> connectWebSocket() async {
     try {
       if (serverAddress.startsWith("https://")) {
-        setupWebsocketChannel("wss://${serverAddress.split("https://").last}$path");
+        setupWebsocketChannel("wss://${serverAddress.split("https://").last}/$appType/sync");
       } else if (serverAddress.startsWith("http://")) {
-        setupWebsocketChannel("ws://${serverAddress.split("http://").last}$path");
+        setupWebsocketChannel("ws://${serverAddress.split("http://").last}/$appType/sync");
       }
     } on WebSocketChannelException {
       connected = false;
@@ -191,7 +192,7 @@ abstract class AppWebChannelCore {
       if (response.statusCode == 200) {
         onSuccess();
 
-        UpdateEvent updateEvent = UpdateEvent(action: UpdateEvent.renameUser, value: name, timestamp: DateTime.now());
+        UpdateEvent updateEvent = UpdateEvent(action: UpdateEvent.renameUser, value: name);
         postWebSocketMessage(updateEvent.toWebSocketMessage());
       } else {
         onFailed(response.statusCode);
@@ -211,6 +212,105 @@ abstract class AppWebChannelCore {
       }
     } catch (e) {
       onFailed();
+    }
+  }
+
+  Future<void> uploadJson(
+      {required String url,
+        required String jsonBody,
+        void Function()? onSuccess,
+        void Function(int?)? onFailed,
+        required UpdateEvent updateEvent}) async {
+    try {
+      final response = await post(Uri.parse(url),
+          headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', "Authorization": token}, body: jsonBody);
+      if (response.statusCode == 200) {
+        if (onSuccess != null) {
+          onSuccess();
+        }
+        postWebSocketMessage(updateEvent.toWebSocketMessage());
+      } else {
+        if (onFailed != null) {
+          onFailed(response.statusCode);
+        }
+      }
+    } catch (e) {
+      if (onFailed != null) {
+        onFailed(null);
+      }
+    }
+  }
+
+  Future<void> uploadFile(
+      {required String url,
+        required String filePath,
+        void Function()? onSuccess,
+        void Function(int?)? onFailed}) async {
+    try {
+      MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
+      MultipartFile multipartFile = await MultipartFile.fromPath("file", filePath);
+
+      request.headers.addAll({"Authorization": token});
+      request.files.add(multipartFile);
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        if (onSuccess != null) {
+          onSuccess();
+        }
+      } else {
+        if (onFailed != null) {
+          onFailed(response.statusCode);
+        }
+      }
+    } catch (e) {
+      if (onFailed != null) {
+        onFailed(null);
+      }
+    }
+  }
+
+  Future<void> downloadLargeFile({required String url,
+    required String filePath,
+    void Function()? onSuccess,
+    void Function(int?)? onFailed}) async {
+    try {
+      final request = Request('GET', Uri.parse(url));
+      request.headers.addAll({'Content-Type': 'application/json; charset=UTF-8', "Authorization": token});
+      final response = await Client().send(request);
+      final file = File(filePath);
+      final sink = file.openWrite();
+
+      await response.stream.pipe(sink);
+      await sink.close();
+
+      if (response.statusCode == 200) {
+        if (onSuccess != null) {
+          onSuccess();
+        }
+      } else if (onFailed != null) {
+        onFailed(response.statusCode);
+      }
+    } catch (e) {
+      if (onFailed != null) {
+        onFailed(null);
+      }
+    }
+  }
+
+  Future<void> downloadJson({required String url, required void Function(Map<String, dynamic>) onSuccess, void Function()? onFailed}) async {
+    try {
+      final response = await get(
+        Uri.parse(url),
+        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', "Authorization": token},
+      );
+      if (response.statusCode == 200) {
+        onSuccess(jsonDecode(utf8.decode(response.bodyBytes)));
+      }
+    } catch (e) {
+      if (onFailed != null) {
+        onFailed();
+      }
     }
   }
 
