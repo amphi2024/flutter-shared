@@ -2,7 +2,6 @@ import 'dart:convert';
 
 class UpdateEvent {
 
-    //websocket, restapi
     static const String uploadNote = "upload_note";
     static const String uploadImage = "upload_image";
     static const String uploadVideo = "upload_video";
@@ -36,11 +35,10 @@ class UpdateEvent {
     static const String deletePlaylistThumbnail = "delete_playlist_thumbnail";
 
     static const String uploadPhoto = "upload_photo";
+    static const String uploadAlbum = "upload_album";
+    static const String deletePhoto = "delete_photo";
 
     static const String renameUser = "rename_user";
-
-    // websocket only
-    static const String moveNotes = "move_notes";
 
     String get action => data["action"];
     get value => data["value"];
