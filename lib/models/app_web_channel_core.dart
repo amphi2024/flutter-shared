@@ -314,4 +314,18 @@ abstract class AppWebChannelCore {
     }
   }
 
+  Future<void> simpleDelete({required String url, void Function()? onSuccess, void Function(int?)? onFailed}) async {
+    final response = await delete(
+      Uri.parse(url),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', "Authorization": token},
+    );
+    if (response.statusCode == 200) {
+      if (onSuccess != null) {
+        onSuccess();
+      }
+    } else if (onFailed != null) {
+      onFailed(response.statusCode);
+    }
+  }
+
 }
