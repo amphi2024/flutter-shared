@@ -314,7 +314,7 @@ abstract class AppWebChannelCore {
     }
   }
 
-  Future<void> simpleDelete({required String url, void Function()? onSuccess, void Function(int?)? onFailed}) async {
+  Future<void> simpleDelete({required String url, void Function()? onSuccess, void Function(int?)? onFailed, required UpdateEvent updateEvent}) async {
     final response = await delete(
       Uri.parse(url),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', "Authorization": token},
@@ -323,6 +323,7 @@ abstract class AppWebChannelCore {
       if (onSuccess != null) {
         onSuccess();
       }
+      postWebSocketMessage(updateEvent.toWebSocketMessage());
     } else if (onFailed != null) {
       onFailed(response.statusCode);
     }
