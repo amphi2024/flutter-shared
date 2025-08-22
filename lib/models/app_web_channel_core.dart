@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -241,60 +242,103 @@ abstract class AppWebChannelCore {
     }
   }
 
-  Future<void> uploadFile(
-      {required String url,
-        required String filePath,
-        void Function()? onSuccess,
-        void Function(int?)? onFailed}) async {
+  Future<void> uploadFile({
+    required String url,
+    required String filePath,
+    void Function()? onSuccess,
+    void Function(int?)? onFailed,
+    void Function(int sent, int total)? onProgress,
+    Map<String, String>? headers,
+  }) async {
     try {
-      MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
-      MultipartFile multipartFile = await MultipartFile.fromPath("file", filePath);
+      final file = File(filePath);
+      final totalLength = await file.length();
 
+      final stream = file.openRead();
+
+      int bytesSent = 0;
+      final byteStream = stream.transform<List<int>>(
+        StreamTransformer.fromHandlers(
+          handleData: (data, sink) {
+            bytesSent += data.length;
+            sink.add(data);
+            if (onProgress != null) {
+              onProgress(bytesSent, totalLength);
+            }
+          },
+        ),
+      );
+
+      final multipartFile = MultipartFile(
+        "file",
+        byteStream,
+        totalLength,
+        filename: file.uri.pathSegments.last,
+      );
+
+      final request = MultipartRequest('POST', Uri.parse(url));
       request.headers.addAll({"Authorization": token});
+      if(headers != null) {
+        request.headers.addAll(headers);
+      }
       request.files.add(multipartFile);
-      var response = await request.send();
+
+      final response = await request.send();
 
       if (response.statusCode == 200) {
-        if (onSuccess != null) {
-          onSuccess();
-        }
+        onSuccess?.call();
       } else {
-        if (onFailed != null) {
-          onFailed(response.statusCode);
-        }
+        onFailed?.call(response.statusCode);
       }
     } catch (e) {
-      if (onFailed != null) {
-        onFailed(null);
-      }
+      onFailed?.call(null);
     }
   }
 
-  Future<void> downloadLargeFile({required String url,
+  Future<void> downloadFile({required String url,
     required String filePath,
     void Function()? onSuccess,
-    void Function(int?)? onFailed}) async {
+    void Function(int?)? onFailed,
+    void Function(int received, int total)? onProgress}) async {
     try {
       final request = Request('GET', Uri.parse(url));
-      request.headers.addAll({'Content-Type': 'application/json; charset=UTF-8', "Authorization": token});
+      request.headers.addAll({
+        'Content-Type': 'application/json; charset=UTF-8',
+        "Authorization": token,
+      });
+
       final response = await Client().send(request);
       final file = File(filePath);
       final sink = file.openWrite();
 
-      await response.stream.pipe(sink);
-      await sink.close();
+      final contentLength = response.contentLength ?? 0;
+      int received = 0;
 
-      if (response.statusCode == 200) {
-        if (onSuccess != null) {
-          onSuccess();
-        }
-      } else if (onFailed != null) {
-        onFailed(response.statusCode);
-      }
+      response.stream.listen(
+            (chunk) {
+          received += chunk.length;
+          sink.add(chunk);
+
+          if (onProgress != null && contentLength != 0) {
+            onProgress(received, contentLength);
+          }
+        },
+        onDone: () async {
+          await sink.close();
+          if (response.statusCode == 200) {
+            onSuccess?.call();
+          } else {
+            onFailed?.call(response.statusCode);
+          }
+        },
+        onError: (e) async {
+          await sink.close();
+          onFailed?.call(null);
+        },
+        cancelOnError: true,
+      );
     } catch (e) {
-      if (onFailed != null) {
-        onFailed(null);
-      }
+      onFailed?.call(null);
     }
   }
 
