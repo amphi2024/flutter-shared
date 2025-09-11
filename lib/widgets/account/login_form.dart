@@ -102,7 +102,7 @@ class _LoginFormState extends State<LoginForm> {
                 AppLocalizations.of(context).get("@login"),
                 style: TextStyle(
                   fontSize: 20,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).floatingActionButtonTheme.focusColor,
                 ),
               ),
               onPressed: () {
