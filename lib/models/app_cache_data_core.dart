@@ -22,18 +22,18 @@ class AppCacheDataCore {
   String? get selectedDirectory => data["selectedDirectory"] ?? "";
   set selectedDirectory(value) => data["selectedDirectory"] = value;
 
-  void getData() async {
+  Future<void> getData() async {
     var directory = await getApplicationSupportDirectory();
     var file = File(PathUtils.join(directory.path, "cache.json"));
     try {
       data = jsonDecode(await file.readAsString());
     }
     catch(e) {
-      save();
+      await save();
     }
   }
 
-  void save() async {
+  Future<void> save() async {
     var directory = await getApplicationSupportDirectory();
     var file = File(PathUtils.join(directory.path, "cache.json"));
     await file.writeAsString(jsonEncode(data));
