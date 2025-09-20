@@ -216,7 +216,7 @@ abstract class AppWebChannelCore {
     }
   }
 
-  Future<void> uploadJson(
+  Future<void> postJson(
       {required String url,
         required String jsonBody,
         void Function()? onSuccess,
@@ -242,7 +242,33 @@ abstract class AppWebChannelCore {
     }
   }
 
-  Future<void> uploadFile({
+  Future<void> patchJson(
+      {required String url,
+        required String jsonBody,
+        void Function()? onSuccess,
+        void Function(int?)? onFailed,
+        required UpdateEvent updateEvent}) async {
+    try {
+      final response = await patch(Uri.parse(url),
+          headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', "Authorization": token}, body: jsonBody);
+      if (response.statusCode == 200) {
+        if (onSuccess != null) {
+          onSuccess();
+        }
+        postWebSocketMessage(updateEvent.toWebSocketMessage());
+      } else {
+        if (onFailed != null) {
+          onFailed(response.statusCode);
+        }
+      }
+    } catch (e) {
+      if (onFailed != null) {
+        onFailed(null);
+      }
+    }
+  }
+
+  Future<void> postFile({
     required String url,
     required String filePath,
     void Function()? onSuccess,
