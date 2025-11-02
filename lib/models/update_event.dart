@@ -73,4 +73,17 @@ class UpdateEvent {
     timestamp: $timestamp
     """;
   }
+
+    @override
+    int get hashCode => action.hashCode ^ value.hashCode;
+
+    @override
+    bool operator ==(Object other) {
+      return identical(this, other) ||
+            other is UpdateEvent &&
+                runtimeType == other.runtimeType &&
+                action == other.action &&
+                value == other.value;
+    }
+
 }
