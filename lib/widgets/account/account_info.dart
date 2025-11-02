@@ -111,12 +111,7 @@ class _AccountInfoState extends State<AccountInfo> {
                             widget.appWebChannel.changeUsername(
                                 name: usernameController.text,
                                 onSuccess: () {
-                                  // appState.notifySomethingChanged(() {
-                                  //   sendingRequest = false;
-                                  //   errorMessage = null;
-                                  //   widget.appStorage.selectedUser.name = usernameController.text;
-                                  //   widget.appStorage.saveSelectedUserInformation();
-                                  // });
+                                  widget.onUsernameChanged();
                                 },
                                 onFailed: (statusCode) {
                                   if (statusCode == HttpStatus.unauthorized) {
