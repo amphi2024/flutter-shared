@@ -1,8 +1,6 @@
 import 'dart:ui';
-int _floatToInt8(double x) {
-  return (x * 255.0).round() & 0xff;
-}
-extension ColorExtension on Color {
+
+extension ColorValues on Color {
 
   String toHexString() {
     return "#${alpha.toHexString()}${red.toHexString()}${green.toHexString()}${blue.toHexString()}";
@@ -13,19 +11,15 @@ extension ColorExtension on Color {
     return int.parse(string);
   }
 
-  // SHUT UP GOOGLE. I will still use this
   int get value {
-    return _floatToInt8(a) << 24 |
-    _floatToInt8(r) << 16 |
-    _floatToInt8(g) << 8 |
-    _floatToInt8(b) << 0;
+    return toARGB32();
   }
 
-  int get alpha => (0xff000000 & value) >> 24;
-  double get opacity => alpha / 0xFF;
-  int get red => (0x00ff0000 & value) >> 24;
-  int get green => (0x0000ff00 & value) >> 24;
-  int get blue => (0x000000ff & value) >> 24;
+  int get alpha => ((a * 255).round() & 0xff);
+  double get opacity => a;
+  int get red => ((r * 255).round() & 0xff);
+  int get green => ((g * 255).round() & 0xff);
+  int get blue => ((b * 255).round() & 0xff);
 
   Color inverted() {
     if((red + green + blue) <= 150 || (red + green + blue) >= 600) {
