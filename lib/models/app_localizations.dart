@@ -95,15 +95,31 @@ else {
 
   Map<String, dynamic> data = {};
 
-  Future<bool> load() async {
-    String data = await rootBundle.loadString('assets/strings/${locale.languageCode}.json');
+  late Map<String, dynamic> fallbackData;
 
-    this.data = json.decode(data);
-    return true;
+  Future<void> load() async {
+    fallbackData = json.decode(
+      await rootBundle.loadString('assets/strings/en.json'),
+    );
+
+    if (locale.languageCode == 'en') {
+      data = fallbackData;
+      return;
+    }
+
+    try {
+      final raw = await rootBundle.loadString(
+        'assets/strings/${locale.languageCode}.json',
+      );
+      data = json.decode(raw);
+    } catch (_) {
+      data = {};
+    }
   }
 
+
   String get(String key) {
-    return data[key] ?? "";
+    return data[key] ?? fallbackData[key] ?? key;
   }
 }
 
@@ -112,7 +128,6 @@ class LocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   bool isSupported(Locale locale) {
-
     return supportedAppLanguages.contains(locale.languageCode);
   }
 
@@ -125,5 +140,5 @@ class LocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
   }
 
   @override
-  bool shouldReload(LocalizationDelegate old) => true;
+  bool shouldReload(LocalizationDelegate old) => false;
 }
