@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+
 class App {
 
   late final bool _desktop;
@@ -14,10 +15,12 @@ class App {
 
   static getInstance() => _instance;
 
+  @Deprecated("DO NOT USE :)")
   static bool isDesktop() {
     return getInstance()._desktop;
   }
 
+  @Deprecated("DO NOT USE :)")
   static bool isWideScreen(BuildContext context) {
     return MediaQuery.of(context).size.width > 600;
   }
