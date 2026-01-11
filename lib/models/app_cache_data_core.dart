@@ -34,6 +34,18 @@ class AppCacheDataCore {
     data["lastUpdateCheck"] = value.toUtc().millisecondsSinceEpoch;
   }
 
+  DateTime get lastServerUpdateCheck {
+    final value = data["lastServerUpdateCheck"];
+    if(value is int) {
+      return DateTime.fromMillisecondsSinceEpoch(value).toLocal();
+    }
+    return DateTime.now().subtract(const Duration(days: 2));
+  }
+
+  set lastServerUpdateCheck(DateTime value) {
+    data["lastServerUpdateCheck"] = value.toUtc().millisecondsSinceEpoch;
+  }
+
   Future<void> getData() async {
     var directory = await getApplicationSupportDirectory();
     var file = File(PathUtils.join(directory.path, "cache.json"));
