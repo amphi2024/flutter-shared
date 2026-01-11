@@ -53,6 +53,11 @@ class AppCacheDataCore {
       data = jsonDecode(await file.readAsString());
     }
     catch(e) {
+      data = {
+        "windowWidth": 600.0,
+        "windowHeight": 400.0,
+        "selectedDirectory": null
+      };
       await save();
     }
   }
