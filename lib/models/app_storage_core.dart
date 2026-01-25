@@ -49,7 +49,7 @@ abstract class AppStorageCore  {
     createDirectoryIfNotExists(selectedUser.storagePath);
   }
 
-  void initialize(void Function() onInitialize) async {
+  Future<void> initialize() async {
     Directory directory = await getApplicationSupportDirectory();
     String appSupportDirPath = directory.path;
     List<FileSystemEntity> userDirectories = Directory(appSupportDirPath).listSync();
@@ -111,8 +111,6 @@ abstract class AppStorageCore  {
     }
 
     initPaths();
-
-    onInitialize();
   }
 
   void createDirectoryIfNotExists(String path) {
