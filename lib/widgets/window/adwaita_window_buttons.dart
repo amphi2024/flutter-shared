@@ -37,9 +37,9 @@ class _CustomButton extends StatelessWidget {
         height: 24,
         child: Material(
           shape: const CircleBorder(),
-          color: isLightMode ? const Color(0xFFEBEBEB) : const Color(0xFF0F0F0F),
+          color: isLightMode ? const Color(0xFFEBEBEB) : const Color(0xFF373737),
           child: InkWell(
-            highlightColor: isLightMode ? const Color(0xFFF0F0F0) : const Color(0xFF141414),
+            highlightColor: isLightMode ? const Color(0xFFF0F0F0) : const Color(0xFF191919),
             mouseCursor: SystemMouseCursors.basic,
             onTap: onPressed,
             customBorder: const CircleBorder(),
