@@ -31,7 +31,7 @@ class _CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 6.5),
       child: SizedBox(
         width: 24,
         height: 24,
