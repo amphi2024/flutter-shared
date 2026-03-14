@@ -1,26 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:window_manager/window_manager.dart';
 
-List<Widget> adwaitaWindowButtons({bool windowButtonsOnLeft = false, required void Function() maximizeOrRestore, required void Function() minimize, required void Function() close, double leftPadding = 0, double rightPadding = 0, bool maximized = false}) {
-  if (windowButtonsOnLeft) {
-    return [
-      Padding(
-        padding: EdgeInsets.only(left: leftPadding),
-        child: _CustomButton(onPressed: close, icon: "assets/icons/window-close.svg"),
+class AdwaitaWindowButtons extends StatelessWidget {
+  final bool windowButtonsOnLeft;
+  final Future<void> Function() onClose;
+  final double padding;
+
+  const AdwaitaWindowButtons({
+    super.key,
+    this.windowButtonsOnLeft = false,
+    required this.onClose,
+    this.padding = 0
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final buttons = [
+      _CustomButton(
+          onPressed: () {
+            minimize();
+          },
+          icon: "assets/icons/window-minimize.svg"
       ),
-      _CustomButton(onPressed: minimize, icon: "assets/icons/window-minimize.svg"),
-      _CustomButton(onPressed: maximizeOrRestore, icon: maximized ? "assets/icons/window-restore.svg" : "assets/icons/window-maximize.svg")
+      const _MaximizeOrRestoreButton(),
+      _CustomButton(
+        onPressed: () async {
+          await onClose();
+          close();
+        },
+        icon: "assets/icons/window-close.svg",
+      ),
     ];
+    if (windowButtonsOnLeft) {
+      return Row(mainAxisSize: MainAxisSize.min, children: [
+        Padding(padding: EdgeInsets.only(left: padding), child: buttons[2]),
+        buttons[0],
+        buttons[1]
+      ]);
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buttons[0],
+        buttons[1],
+        Padding(padding: EdgeInsets.only(right: padding), child: buttons[2]),
+      ],
+    );
   }
-  return [
-    _CustomButton(onPressed: minimize, icon: "assets/icons/window-minimize.svg"),
-    _CustomButton(onPressed: maximizeOrRestore, icon: maximized ? "assets/icons/window-restore.svg" : "assets/icons/window-maximize.svg"),
-    Padding(
-      padding: EdgeInsets.only(right: rightPadding),
-      child: _CustomButton(onPressed: close, icon: "assets/icons/window-close.svg"),
-    )
-  ];
 }
+
+class _MaximizeOrRestoreButton extends StatefulWidget{
+  const _MaximizeOrRestoreButton();
+
+  @override
+  State<_MaximizeOrRestoreButton> createState() => _MaximizeOrRestoreButtonState();
+}
+
+class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with WindowListener {
+
+  String icon = "assets/icons/window-maximize.svg";
+
+  @override
+  void onWindowMaximize() {
+    setState(() {
+      icon = "assets/icons/window-restore.svg";
+    });
+  }
+
+  @override
+  void onWindowRestore() {
+    setState(() {
+      icon = "assets/icons/window-maximize.svg";
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return _CustomButton(onPressed: () {
+      maximizeOrRestore();
+    }, icon: icon);
+  }
+}
+
 
 class _CustomButton extends StatelessWidget {
   final void Function() onPressed;
@@ -60,4 +122,20 @@ class _CustomButton extends StatelessWidget {
       ),
     );
   }
+}
+
+void minimize() {
+  windowManager.minimize();
+}
+
+void maximizeOrRestore() async {
+  if (!(await windowManager.isMaximizable())) {
+    windowManager.unmaximize();
+  } else {
+    windowManager.maximize();
+  }
+}
+
+void close() {
+  windowManager.close();
 }
