@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../../utils/linux_window_control.dart';
+
 class AdwaitaWindowButtons extends StatelessWidget {
   final bool windowButtonsOnLeft;
   final Future<void> Function() onClose;
@@ -122,20 +124,4 @@ class _CustomButton extends StatelessWidget {
       ),
     );
   }
-}
-
-void minimize() {
-  windowManager.minimize();
-}
-
-void maximizeOrRestore() async {
-  if (!(await windowManager.isMaximizable())) {
-    windowManager.unmaximize();
-  } else {
-    windowManager.maximize();
-  }
-}
-
-void close() {
-  windowManager.close();
 }

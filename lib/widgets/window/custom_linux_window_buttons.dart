@@ -1,62 +1,84 @@
-// import 'package:flutter/widgets.dart';
-// import 'package:libadwaita/libadwaita.dart';
-// import 'package:modern_titlebar_buttons/modern_titlebar_buttons.dart';
-// import 'package:window_manager/window_manager.dart';
-//
-// const _iconSize = 23.0;
-//
-// List<Widget> customWindowButtons({bool windowButtonsOnLeft = false, required void Function() maximizeOrRestore, required void Function() minimize, required void Function() close}) {
-//   if (windowButtonsOnLeft) {
-//     return [
-//       Padding(
-//         padding: const EdgeInsets.only(left: 5),
-//         child: AdwWindowButton(
-//             buttonType: WindowButtonType.close,
-//             onPressed: () => _close(),
-//             nativeControls: false),
-//       ),
-//       AdwWindowButton(
-//           buttonType: WindowButtonType.minimize,
-//           onPressed: () => _minimize(),
-//           nativeControls: false),
-//       AdwWindowButton(
-//           buttonType: WindowButtonType.maximize,
-//           onPressed: () => _maximizeOrRestore(),
-//           nativeControls: false),
-//     ];
-//   }
-//   return [
-//     AdwWindowButton(
-//         buttonType: WindowButtonType.minimize,
-//         onPressed: () => _minimize(),
-//         nativeControls: false),
-//     AdwWindowButton(
-//         buttonType: WindowButtonType.maximize,
-//         onPressed: () => _maximizeOrRestore(),
-//         nativeControls: false),
-//     Padding(
-//       padding: const EdgeInsets.only(right: 5),
-//       child: AdwWindowButton(
-//           buttonType: WindowButtonType.close,
-//           onPressed: () => _close(),
-//           nativeControls: false),
-//     )
-//   ];
-// }
-//
-// void _minimize() {
-//   windowManager.minimize();
-// }
-//
-// void _maximizeOrRestore() async {
-//   if (!(await windowManager.isMaximizable())) {
-//     windowManager.unmaximize();
-//   } else {
-//     windowManager.maximize();
-//   }
-// }
-//
-// void _close() async {
-//   await saveWindowSize();
-//   windowManager.close();
-// }
+import 'package:flutter/material.dart';
+import 'package:linux_csd_buttons/linux_csd_buttons.dart';
+import 'package:window_manager/window_manager.dart';
+
+import '../../utils/linux_window_control.dart';
+
+class CustomLinuxWindowButtons extends StatelessWidget {
+  final CsdTheme theme;
+  final bool windowButtonsOnLeft;
+  final Future<void> Function() onClose;
+  final double padding;
+
+  const CustomLinuxWindowButtons({super.key, required this.theme, this.windowButtonsOnLeft = false, required this.onClose, this.padding = 0});
+
+  @override
+  Widget build(BuildContext context) {
+    final buttons = [
+      CsdButton(
+          theme: theme,
+          onPressed: () {
+            minimize();
+          },
+          type: CsdButtonType.minimize),
+      _MaximizeOrRestoreButton(theme: theme),
+      CsdButton(
+          theme: theme,
+          onPressed: () async {
+            await onClose();
+            close();
+          },
+          type: CsdButtonType.close),
+    ];
+    if (windowButtonsOnLeft) {
+      return Row(
+          mainAxisSize: MainAxisSize.min, children: [Padding(padding: EdgeInsets.only(left: padding), child: buttons[2]), buttons[0], buttons[1]]);
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        buttons[0],
+        buttons[1],
+        Padding(padding: EdgeInsets.only(right: padding), child: buttons[2]),
+      ],
+    );
+  }
+}
+
+class _MaximizeOrRestoreButton extends StatefulWidget {
+  final CsdTheme theme;
+
+  const _MaximizeOrRestoreButton({required this.theme});
+
+  @override
+  State<_MaximizeOrRestoreButton> createState() => _MaximizeOrRestoreButtonState();
+}
+
+class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with WindowListener {
+  CsdButtonType type = CsdButtonType.maximize;
+
+  @override
+  void onWindowMaximize() {
+    setState(() {
+      type = CsdButtonType.restore;
+    });
+  }
+
+  @override
+  void onWindowRestore() {
+    setState(() {
+      type = CsdButtonType.maximize;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CsdButton(
+        theme: widget.theme,
+        onPressed: () {
+          maximizeOrRestore();
+        },
+        type: type);
+  }
+}
