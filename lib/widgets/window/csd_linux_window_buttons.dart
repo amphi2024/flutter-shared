@@ -4,13 +4,12 @@ import 'package:window_manager/window_manager.dart';
 
 import '../../utils/linux_window_control.dart';
 
-class CustomLinuxWindowButtons extends StatelessWidget {
+class CsdLinuxWindowButtons extends StatelessWidget {
   final CsdTheme theme;
   final bool windowButtonsOnLeft;
   final Future<void> Function() onClose;
-  final double padding;
 
-  const CustomLinuxWindowButtons({super.key, required this.theme, this.windowButtonsOnLeft = false, required this.onClose, this.padding = 0});
+  const CsdLinuxWindowButtons({super.key, required this.theme, this.windowButtonsOnLeft = false, required this.onClose});
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +30,12 @@ class CustomLinuxWindowButtons extends StatelessWidget {
           type: CsdButtonType.close),
     ];
     if (windowButtonsOnLeft) {
-      return Row(
-          mainAxisSize: MainAxisSize.min, children: [Padding(padding: EdgeInsets.only(left: padding), child: buttons[2]), buttons[0], buttons[1]]);
+      return Row(mainAxisSize: MainAxisSize.min, children: [buttons[2], buttons[0], buttons[1]]);
     }
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        buttons[0],
-        buttons[1],
-        Padding(padding: EdgeInsets.only(right: padding), child: buttons[2]),
-      ],
+      children: [buttons[0], buttons[1], buttons[2]],
     );
   }
 }
@@ -67,6 +61,13 @@ class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with
 
   @override
   void onWindowRestore() {
+    setState(() {
+      type = CsdButtonType.maximize;
+    });
+  }
+
+  @override
+  void onWindowUnmaximize() {
     setState(() {
       type = CsdButtonType.maximize;
     });
