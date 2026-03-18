@@ -77,6 +77,14 @@ class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with
       icon = "assets/icons/window-maximize.svg";
     });
   }
+
+  @override
+  void onWindowUnmaximize() {
+    setState(() {
+      icon = "assets/icons/window-restore.svg";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return _CustomButton(onPressed: () {
