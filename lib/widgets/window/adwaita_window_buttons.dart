@@ -86,6 +86,18 @@ class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    windowManager.removeListener(this);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    windowManager.addListener(this);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return _CustomButton(onPressed: () {
       maximizeOrRestore();
