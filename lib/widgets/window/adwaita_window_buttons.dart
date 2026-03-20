@@ -9,12 +9,7 @@ class AdwaitaWindowButtons extends StatelessWidget {
   final Future<void> Function() onClose;
   final double padding;
 
-  const AdwaitaWindowButtons({
-    super.key,
-    this.windowButtonsOnLeft = false,
-    required this.onClose,
-    this.padding = 0
-  });
+  const AdwaitaWindowButtons({super.key, this.windowButtonsOnLeft = false, required this.onClose, this.padding = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +18,7 @@ class AdwaitaWindowButtons extends StatelessWidget {
           onPressed: () {
             minimize();
           },
-          icon: "assets/icons/window-minimize.svg"
-      ),
+          icon: "assets/icons/window-minimize.svg"),
       const _MaximizeOrRestoreButton(),
       _CustomButton(
         onPressed: () async {
@@ -35,11 +29,8 @@ class AdwaitaWindowButtons extends StatelessWidget {
       ),
     ];
     if (windowButtonsOnLeft) {
-      return Row(mainAxisSize: MainAxisSize.min, children: [
-        Padding(padding: EdgeInsets.only(left: padding), child: buttons[2]),
-        buttons[0],
-        buttons[1]
-      ]);
+      return Row(
+          mainAxisSize: MainAxisSize.min, children: [Padding(padding: EdgeInsets.only(left: padding), child: buttons[2]), buttons[0], buttons[1]]);
     }
 
     return Row(
@@ -53,7 +44,7 @@ class AdwaitaWindowButtons extends StatelessWidget {
   }
 }
 
-class _MaximizeOrRestoreButton extends StatefulWidget{
+class _MaximizeOrRestoreButton extends StatefulWidget {
   const _MaximizeOrRestoreButton();
 
   @override
@@ -61,54 +52,66 @@ class _MaximizeOrRestoreButton extends StatefulWidget{
 }
 
 class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with WindowListener {
-
   String icon = "assets/icons/window-maximize.svg";
 
-  @override
-  void onWindowMaximize() {
-    setState(() {
-      icon = "assets/icons/window-restore.svg";
-    });
-  }
-
-  @override
-  void onWindowRestore() {
-    setState(() {
-      icon = "assets/icons/window-maximize.svg";
-    });
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    setState(() {
-      icon = "assets/icons/window-restore.svg";
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    windowManager.removeListener(this);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    windowManager.addListener(this);
-  }
+  //
+  // @override
+  // void onWindowMaximize() {
+  //   setState(() {
+  //     icon = "assets/icons/window-restore.svg";
+  //   });
+  // }
+  //
+  // @override
+  // void onWindowRestore() {
+  //   setState(() {
+  //     icon = "assets/icons/window-maximize.svg";
+  //   });
+  // }
+  //
+  // @override
+  // void onWindowUnmaximize() {
+  //   setState(() {
+  //     icon = "assets/icons/window-restore.svg";
+  //   });
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   windowManager.removeListener(this);
+  // }
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   windowManager.addListener(this);
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return _CustomButton(onPressed: () {
-      maximizeOrRestore();
-    }, icon: icon);
+    return _CustomButton(
+        onPressed: () async {
+          if (!(await windowManager.isMaximizable())) {
+            await windowManager.unmaximize();
+            setState(() {
+              icon = "assets/icons/window-maximize.svg";
+            });
+          } else {
+            await windowManager.maximize();
+            setState(() {
+              icon = "assets/icons/window-restore.svg";
+            });
+          }
+        },
+        icon: icon);
   }
 }
-
 
 class _CustomButton extends StatelessWidget {
   final void Function() onPressed;
   final String icon;
+
   const _CustomButton({required this.onPressed, required this.icon});
 
   @override

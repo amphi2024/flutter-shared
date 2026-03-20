@@ -52,45 +52,55 @@ class _MaximizeOrRestoreButton extends StatefulWidget {
 class _MaximizeOrRestoreButtonState extends State<_MaximizeOrRestoreButton> with WindowListener {
   CsdButtonType type = CsdButtonType.maximize;
 
-  @override
-  void onWindowMaximize() {
-    setState(() {
-      type = CsdButtonType.restore;
-    });
-  }
-
-  @override
-  void onWindowRestore() {
-    setState(() {
-      type = CsdButtonType.maximize;
-    });
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    setState(() {
-      type = CsdButtonType.maximize;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    windowManager.removeListener(this);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    windowManager.addListener(this);
-  }
+  // @override
+  // void onWindowMaximize() {
+  //   setState(() {
+  //     type = CsdButtonType.restore;
+  //   });
+  // }
+  //
+  // @override
+  // void onWindowRestore() {
+  //   setState(() {
+  //     type = CsdButtonType.maximize;
+  //   });
+  // }
+  //
+  // @override
+  // void onWindowUnmaximize() {
+  //   setState(() {
+  //     type = CsdButtonType.maximize;
+  //   });
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   windowManager.removeListener(this);
+  // }
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   windowManager.addListener(this);
+  // }
 
   @override
   Widget build(BuildContext context) {
     return CsdButton(
         theme: widget.theme,
-        onPressed: () {
-          maximizeOrRestore();
+        onPressed: () async {
+          if (!(await windowManager.isMaximizable())) {
+            await windowManager.unmaximize();
+            setState(() {
+              type = CsdButtonType.maximize;
+            });
+          } else {
+            await windowManager.maximize();
+            setState(() {
+              type = CsdButtonType.restore;
+            });
+          }
         },
         type: type);
   }
